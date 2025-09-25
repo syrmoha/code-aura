@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة تحكم Code Aura</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #6200ea;
+            --secondary-color: #03dac6;
+            --dark-bg: #121212;
+            --dark-surface: #1e1e1e;
+            --dark-text: #ffffff;
+            --dark-text-secondary: rgba(255, 255, 255, 0.7);
+        }
+        
+        body {
+            background-color: var(--dark-bg);
+            color: var(--dark-text);
+            font-family: 'Tajawal', sans-serif;
+        }
+        
+        .sidebar {
+            background-color: var(--dark-surface);
+            height: 100vh;
+            position: fixed;
+            padding-top: 20px;
+        }
+        
+        .sidebar .nav-link {
+            color: var(--dark-text-secondary);
+            border-radius: 5px;
+            margin: 5px 0;
+        }
+        
+        .sidebar .nav-link:hover,
+        .sidebar .nav-link.active {
+            background-color: rgba(98, 0, 234, 0.2);
+            color: var(--dark-text);
+        }
+        
+        .sidebar .nav-link i {
+            margin-left: 10px;
+        }
+        
+        .main-content {
+            margin-right: 250px;
+            padding: 20px;
+        }
+        
+        .card {
+            background-color: var(--dark-surface);
+            border: none;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .card-header {
+            background-color: rgba(98, 0, 234, 0.2);
+            color: var(--dark-text);
+            border-bottom: none;
+            border-radius: 10px 10px 0 0 !important;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+        
+        .btn-secondary {
+            background-color: var(--secondary-color);
+            border-color: var(--secondary-color);
+            color: #000;
+        }
+        
+        .table {
+            color: var(--dark-text-secondary);
+        }
+        
+        .table thead th {
+            border-bottom-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .table td, .table th {
+            border-top-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .stat-card {
+            background: linear-gradient(45deg, var(--primary-color), #9d4edd);
+            color: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .stat-card h2 {
+            font-size: 2.5rem;
+            margin-bottom: 0;
+        }
+        
+        .stat-card p {
+            margin-bottom: 0;
+            opacity: 0.8;
+        }
+        
+        .stat-card i {
+            font-size: 3rem;
+            opacity: 0.4;
+        }
+        
+        .login-container {
+            max-width: 400px;
+            margin: 100px auto;
+            padding: 30px;
+            background-color: var(--dark-surface);
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .login-logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .login-logo h1 {
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+        
+        .login-logo span {
+            color: var(--secondary-color);
+        }
+        
+        .form-control {
+            background-color: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: var(--dark-text);
+            padding: 12px;
+        }
+        
+        .form-control:focus {
+            background-color: rgba(255, 255, 255, 0.15);
+            color: var(--dark-text);
+            box-shadow: none;
+        }
+        
+        .loading-spinner {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        
+        .spinner-border {
+            width: 3rem;
+            height: 3rem;
+            color: var(--primary-color);
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Login Screen -->
+    <div id="login-screen" class="container">
+        <div class="login-container">
+            <div class="login-logo">
+                <h1>Code <span>Aura</span></h1>
+                <p>لوحة تحكم الأدمن</p>
+            </div>
+            <div class="alert alert-danger d-none" id="login-error"></div>
+            <form id="login-form">
+                <div class="mb-3">
+                    <label for="email" class="form-label">البريد الإلكتروني</label>
+                    <input type="email" class="form-control" id="email" required>
+                </div>
+                <div class="mb-3">
+                    <label for="password" class="form-label">كلمة المرور</label>
+                    <input type="password" class="form-control" id="password" required>
+                </div>
+                <button type="submit" class="btn btn-primary w-100">تسجيل الدخول</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Loading Spinner -->
+    <div id="loading-spinner" class="loading-spinner d-none">
+        <div class="spinner-border" role="status">
+            <span class="visually-hidden">جاري التحميل...</span>
+        </div>
+    </div>
+
+    <!-- Admin Dashboard -->
+    <div id="admin-dashboard" class="d-none">
+        <div class="container-fluid">
+            <div class="row">
+                <!-- Sidebar -->
+                <div class="col-md-2 sidebar">
+                    <div class="text-center mb-4">
+                        <h3>Code Aura</h3>
+                        <p>لوحة التحكم</p>
+                    </div>
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link active" href="#dashboard" data-section="dashboard">
+                                <i class="fas fa-tachometer-alt"></i> الرئيسية
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#users" data-section="users">
+                                <i class="fas fa-users"></i> المستخدمين
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#courses" data-section="courses">
+                                <i class="fas fa-book"></i> الدورات
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#quizzes" data-section="quizzes">
+                                <i class="fas fa-question-circle"></i> الاختبارات
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#games" data-section="games">
+                                <i class="fas fa-gamepad"></i> الألعاب
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#ai-tools" data-section="ai-tools">
+                                <i class="fas fa-robot"></i> أدوات الذكاء الاصطناعي
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#articles" data-section="articles">
+                                <i class="fas fa-newspaper"></i> المقالات
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#categories" data-section="categories">
+                                <i class="fas fa-tags"></i> التصنيفات
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#forums" data-section="forums">
+                                <i class="fas fa-comments"></i> المنتديات
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#homepage" data-section="homepage">
+                                <i class="fas fa-home"></i> الصفحة الرئيسية
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#statistics" data-section="statistics">
+                                <i class="fas fa-chart-bar"></i> الإحصائيات
+                            </a>
+                        </li>
+                        <li class="nav-item mt-5">
+                            <a class="nav-link" href="#" id="logout-btn">
+                                <i class="fas fa-sign-out-alt"></i> تسجيل الخروج
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Main Content -->
+                <div class="col-md-10 main-content">
+                    <!-- Dashboard Section -->
+                    <div id="dashboard-section" class="content-section">
+                        <h2 class="mb-4">لوحة التحكم</h2>
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="stat-card">
+                                    <div class="d-flex justify-content-between">
+                                        <div>
+                                            <h2 id="total-users">0</h2>
+                                            <p>المستخدمين</p>
+                                        </div>
+                                        <i class="fas fa-users"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="stat-card">
+                                    <div class="d-flex justify-content-between">
+                                        <div>
+                                            <h2 id="total-courses">0</h2>
+                                            <p>الدورات</p>
+                                        </div>
+                                        <i class="fas fa-book"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="stat-card">
+                                    <div class="d-flex justify-content-between">
+                                        <div>
+                                            <h2 id="total-quizzes">0</h2>
+                                            <p>الاختبارات</p>
+                                        </div>
+                                        <i class="fas fa-question-circle"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="stat-card">
+                                    <div class="d-flex justify-content-between">
+                                        <div>
+                                            <h2 id="total-articles">0</h2>
+                                            <p>المقالات</p>
+                                        </div>
+                                        <i class="fas fa-newspaper"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mt-4">
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5>المستخدمين الجدد</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <table class="table" id="recent-users-table">
+                                            <thead>
+                                                <tr>
+                                                    <th>اسم المستخدم</th>
+                                                    <th>البريد الإلكتروني</th>
+                                                    <th>تاريخ التسجيل</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <!-- Will be filled dynamically -->
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5>أحدث الدورات</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <table class="table" id="recent-courses-table">
+                                            <thead>
+                                                <tr>
+                                                    <th>العنوان</th>
+                                                    <th>اللغة</th>
+                                                    <th>المستوى</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <!-- Will be filled dynamically -->
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Other sections will be added dynamically -->
+                    <div id="users-section" class="content-section d-none">
+                        <h2 class="mb-4">إدارة المستخدمين</h2>
+                        <!-- Content will be loaded dynamically -->
+                    </div>
+
+                    <div id="courses-section" class="content-section d-none">
+                        <h2 class="mb-4">إدارة الدورات</h2>
+                        <!-- Content will be loaded dynamically -->
+                    </div>
+
+                    <div id="quizzes-section" class="content-section d-none">
+                        <h2 class="mb-4">إدارة الاختبارات</h2>
+                        <!-- Content will be loaded dynamically -->
+                    </div>
+
+                    <div id="games-section" class="content-section d-none">
+                        <h2 class="mb-4">إدارة الألعاب</h2>
+                        <!-- Content will be loaded dynamically -->
+                    </div>
+
+                    <div id="ai-tools-section" class="content-section d-none">
+                        <h2 class="mb-4">إدارة أدوات الذكاء الاصطناعي</h2>
+                        <!-- Content will be loaded dynamically -->
+                    </div>
+
+                    <div id="articles-section" class="content-section d-none">
+                        <h2 class="mb-4">إدارة المقالات</h2>
+                        <!-- Content will be loaded dynamically -->
+                    </div>
+
+                    <div id="categories-section" class="content-section d-none">
+                        <h2 class="mb-4">إدارة التصنيفات</h2>
+                        <!-- Content will be loaded dynamically -->
+                    </div>
+
+                    <div id="forums-section" class="content-section d-none">
+                        <h2 class="mb-4">إدارة المنتديات</h2>
+                        <!-- Content will be loaded dynamically -->
+                    </div>
+
+                    <div id="homepage-section" class="content-section d-none">
+                        <h2 class="mb-4">إدارة الصفحة الرئيسية</h2>
+                        <!-- Content will be loaded dynamically -->
+                    </div>
+
+                    <div id="statistics-section" class="content-section d-none">
+                        <h2 class="mb-4">الإحصائيات</h2>
+                        <!-- Content will be loaded dynamically -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // API Base URL
+        const API_BASE_URL = '/api';
+        
+        // DOM Elements
+        const loginScreen = document.getElementById('login-screen');
+        const adminDashboard = document.getElementById('admin-dashboard');
+        const loadingSpinner = document.getElementById('loading-spinner');
+        const loginForm = document.getElementById('login-form');
+        const loginError = document.getElementById('login-error');
+        const logoutBtn = document.getElementById('logout-btn');
+        const navLinks = document.querySelectorAll('.nav-link[data-section]');
+        
+        // Authentication Functions
+        function checkAuth() {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                showLoginScreen();
+                return;
+            }
+            
+            // Verify token
+            fetch(`${API_BASE_URL}/auth/profile`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Invalid token');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.role !== 'admin') {
+                    throw new Error('Not an admin user');
+                }
+                showDashboard();
+                loadDashboardData();
+            })
+            .catch(error => {
+                console.error('Auth error:', error);
+                localStorage.removeItem('token');
+                showLoginScreen();
+            });
+        }
+        
+        function login(email, password) {
+            showLoading();
+            
+            fetch(`${API_BASE_URL}/auth/login`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ email, password })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    throw new Error(data.error);
+                }
+                
+                if (data.user.role !== 'admin') {
+                    throw new Error('ليس لديك صلاحيات الأدمن');
+                }
+                
+                localStorage.setItem('token', data.access_token);
+                localStorage.setItem('user', JSON.stringify(data.user));
+                
+                showDashboard();
+                loadDashboardData();
+            })
+            .catch(error => {
+                console.error('Login error:', error);
+                loginError.textContent = error.message || 'خطأ في تسجيل الدخول';
+                loginError.classList.remove('d-none');
+                showLoginScreen();
+            });
+        }
+        
+        function logout() {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            showLoginScreen();
+        }
+        
+        // UI Functions
+        function showLoginScreen() {
+            loginScreen.classList.remove('d-none');
+            adminDashboard.classList.add('d-none');
+            loadingSpinner.classList.add('d-none');
+        }
+        
+        function showDashboard() {
+            loginScreen.classList.add('d-none');
+            adminDashboard.classList.remove('d-none');
+            loadingSpinner.classList.add('d-none');
+        }
+        
+        function showLoading() {
+            loginScreen.classList.add('d-none');
+            adminDashboard.classList.add('d-none');
+            loadingSpinner.classList.remove('d-none');
+        }
+        
+        function showSection(sectionId) {
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.classList.add('d-none');
+            });
+            
+            document.getElementById(`${sectionId}-section`).classList.remove('d-none');
+            
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('data-section') === sectionId) {
+                    link.classList.add('active');
+                }
+            });
+        }
+        
+        // Data Loading Functions
+        function loadDashboardData() {
+            const token = localStorage.getItem('token');
+            
+            // Load dashboard statistics
+            fetch(`${API_BASE_URL}/admin/dashboard`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Update statistics
+                document.getElementById('total-users').textContent = data.statistics.user_count;
+                document.getElementById('total-courses').textContent = data.statistics.course_count;
+                document.getElementById('total-quizzes').textContent = data.statistics.quiz_count;
+                document.getElementById('total-articles').textContent = data.statistics.article_count;
+                
+                // Update recent users table
+                const recentUsersTable = document.getElementById('recent-users-table').querySelector('tbody');
+                recentUsersTable.innerHTML = '';
+                
+                data.recent_users.forEach(user => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${user.username}</td>
+                        <td>${user.email}</td>
+                        <td>${new Date(user.created_at).toLocaleDateString('ar-SA')}</td>
+                    `;
+                    recentUsersTable.appendChild(row);
+                });
+                
+                // Update recent courses table
+                const recentCoursesTable = document.getElementById('recent-courses-table').querySelector('tbody');
+                recentCoursesTable.innerHTML = '';
+                
+                data.recent_courses.forEach(course => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${course.title}</td>
+                        <td>${course.language === 'arabic' ? 'العربية' : course.language === 'english' ? 'الإنجليزية' : 'أخرى'}</td>
+                        <td>${course.level === 'beginner' ? 'مبتدئ' : course.level === 'intermediate' ? 'متوسط' : 'متقدم'}</td>
+                    `;
+                    recentCoursesTable.appendChild(row);
+                });
+            })
+            .catch(error => {
+                console.error('Error loading dashboard data:', error);
+            });
+        }
+        
+        // Event Listeners
+        document.addEventListener('DOMContentLoaded', () => {
+            // Check authentication
+            checkAuth();
+            
+            // Login form submission
+            loginForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const email = document.getElementById('email').value;
+                const password = document.getElementById('password').value;
+                login(email, password);
+            });
+            
+            // Logout button
+            logoutBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                logout();
+            });
+            
+            // Navigation links
+            navLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const section = link.getAttribute('data-section');
+                    showSection(section);
+                    
+                    // Load section data if needed
+                    // This will be implemented for each section
+                });
+            });
+        });
+    </script>
+</body>
+</html>
+

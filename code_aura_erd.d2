@@ -1,0 +1,206 @@
+direction: right
+
+User: {
+  id: int {pk}
+  username: varchar(50) {unique}
+  email: varchar(100) {unique}
+  password_hash: varchar(255)
+  profile_picture_url: varchar(255)
+  bio: text
+  created_at: datetime
+  last_login: datetime
+  role: enum(\'user\', \'admin\')
+}
+
+Course: {
+  id: int {pk}
+  title: varchar(255)
+  description: text
+  video_url: varchar(255)
+  level: enum(\'beginner\', \'intermediate\', \'advanced\')
+  created_at: datetime
+  updated_at: datetime
+}
+
+CourseSection: {
+  id: int {pk}
+  course_id: int {fk: Course.id}
+  title: varchar(255)
+  order_index: int
+}
+
+CourseLesson: {
+  id: int {pk}
+  section_id: int {fk: CourseSection.id}
+  title: varchar(255)
+  content_text: longtext
+  video_url: varchar(255)
+  order_index: int
+}
+
+UserCourseProgress: {
+  user_id: int {pk, fk: User.id}
+  course_id: int {pk, fk: Course.id}
+  lesson_id: int {fk: CourseLesson.id}
+  completed_lessons: json
+  status: enum(\'not_started\', \'in_progress\', \'completed\')
+  started_at: datetime
+  completed_at: datetime
+}
+
+Category: {
+  id: int {pk}
+  name: varchar(100) {unique}
+  description: text
+}
+
+CourseCategory: {
+  course_id: int {pk, fk: Course.id}
+  category_id: int {pk, fk: Category.id}
+}
+
+Article: {
+  id: int {pk}
+  title: varchar(255)
+  content: longtext
+  author_id: int {fk: User.id}
+  created_at: datetime
+  updated_at: datetime
+  is_published: boolean
+}
+
+ArticleCategory: {
+  article_id: int {pk, fk: Article.id}
+  category_id: int {pk, fk: Category.id}
+}
+
+Quiz: {
+  id: int {pk}
+  title: varchar(255)
+  description: text
+  level: enum(\'easy\', \'medium\', \'hard\')
+  created_at: datetime
+}
+
+QuizQuestion: {
+  id: int {pk}
+  quiz_id: int {fk: Quiz.id}
+  question_text: text
+  question_type: enum(\'multiple_choice\', \'code_challenge\')
+  correct_answer: text
+  options: json
+}
+
+UserQuizAttempt: {
+  id: int {pk}
+  user_id: int {fk: User.id}
+  quiz_id: int {fk: Quiz.id}
+  score: int
+  attempt_date: datetime
+  answers_submitted: json
+}
+
+Game: {
+  id: int {pk}
+  title: varchar(255)
+  description: text
+  game_url: varchar(255)
+  created_at: datetime
+}
+
+UserGameScore: {
+  user_id: int {pk, fk: User.id}
+  game_id: int {pk, fk: Game.id}
+  score: int
+  played_at: datetime
+}
+
+AITool: {
+  id: int {pk}
+  name: varchar(255)
+  description: text
+  api_endpoint: varchar(255)
+  tool_type: enum(\'explain_code\', \'generate_code\', \'debug_code\', \'convert_code\')
+  created_at: datetime
+}
+
+Comment: {
+  id: int {pk}
+  user_id: int {fk: User.id}
+  content: text
+  created_at: datetime
+  parent_comment_id: int {fk: Comment.id}
+  commentable_type: varchar(50)
+  commentable_id: int
+}
+
+CommunityPost: {
+  id: int {pk}
+  user_id: int {fk: User.id}
+  title: varchar(255)
+  content: text
+  post_type: enum(\'code\', \'question\', \'article_snippet\')
+  created_at: datetime
+  updated_at: datetime
+}
+
+Like: {
+  user_id: int {pk, fk: User.id}
+  likeable_type: varchar(50) {pk}
+  likeable_id: int {pk}
+  created_at: datetime
+}
+
+Forum: {
+  id: int {pk}
+  name: varchar(255)
+  description: text
+  category_id: int {fk: Category.id}
+  created_at: datetime
+}
+
+ForumPost: {
+  id: int {pk}
+  forum_id: int {fk: Forum.id}
+  user_id: int {fk: User.id}
+  title: varchar(255)
+  content: text
+  created_at: datetime
+  parent_post_id: int {fk: ForumPost.id}
+}
+
+Notification: {
+  id: int {pk}
+  user_id: int {fk: User.id}
+  message: text
+  is_read: boolean
+  created_at: datetime
+  related_entity_type: varchar(50)
+  related_entity_id: int
+}
+
+User.id <-> UserCourseProgress.user_id
+Course.id <-> UserCourseProgress.course_id
+CourseSection.id <-> CourseLesson.section_id
+Course.id <-> CourseSection.course_id
+User.id <-> Article.author_id
+Category.id <-> CourseCategory.category_id
+Course.id <-> CourseCategory.course_id
+Category.id <-> ArticleCategory.category_id
+Article.id <-> ArticleCategory.article_id
+Quiz.id <-> QuizQuestion.quiz_id
+User.id <-> UserQuizAttempt.user_id
+Quiz.id <-> UserQuizAttempt.quiz_id
+User.id <-> UserGameScore.user_id
+Game.id <-> UserGameScore.game_id
+User.id <-> Comment.user_id
+Comment.id <-> Comment.parent_comment_id
+User.id <-> CommunityPost.user_id
+User.id <-> Like.user_id
+Category.id <-> Forum.category_id
+Forum.id <-> ForumPost.forum_id
+User.id <-> ForumPost.user_id
+ForumPost.id <-> ForumPost.parent_post_id
+User.id <-> Notification.user_id
+
+

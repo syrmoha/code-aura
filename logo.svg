@@ -1,0 +1,7 @@
+<svg width="200" height="60" viewBox="0 0 200 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M30 10L10 30L30 50" stroke="#6200EA" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M50 10L70 30L50 50" stroke="#03DAC6" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="85" y="35" font-family="Arial, sans-serif" font-weight="bold" font-size="24" fill="#6200EA">Code</text>
+  <text x="145" y="35" font-family="Arial, sans-serif" font-weight="bold" font-size="24" fill="#03DAC6">Aura</text>
+</svg>
+
